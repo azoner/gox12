@@ -1,4 +1,4 @@
-xog
+gox12
 ===
 
-X12 golang experiments
+X12 golang experimentation
