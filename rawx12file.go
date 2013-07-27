@@ -22,12 +22,7 @@ func main() {
     defer inFile.Close()
     ch := make(chan string)
     go ReadSegmentLines(inFile, ch)
-    var row string
-    for {
-        row = <-ch
-        if row == "" {
-            break
-        }
+    for row := range ch {
         fmt.Println(row)
     }
 }
@@ -46,15 +41,14 @@ func ReadSegmentLines(inFile io.Reader, ch chan string) {
     for {
         row, err := reader.ReadString(delim.SegmentTerm)
         if err == io.EOF {
-            ch <- ""
             break
         } else if err != nil {
             panic(err)
         }
         row = strings.Trim(row, "~\r\n")
-        //fmt.Println(row)
         ch <- row
     }
+    close(ch)
 }
 
 type Delimiters struct {
