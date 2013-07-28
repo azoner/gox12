@@ -1,4 +1,4 @@
 gox12
 ===
 
-X12 golang experimentation
+Go X12 parser
