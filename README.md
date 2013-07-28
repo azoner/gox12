@@ -18,23 +18,23 @@ Example
 package main
 
 import (
-  "github.com/azoner/gox12"
-  "log"
-  "os"
-  "fmt"
+	"github.com/azoner/gox12"
+	"log"
+	"os"
+	"fmt"
 )
 
 func main() {
 	file, err := os.Open("testx12.txt")
 	if err != nil {
 		log.Fatal(err)
-    os.Exit(1)
+		os.Exit(1)
 	}
-  defer file.Close()
-  ch := make(chan RawSegment)
-  go ReadSegmentLines(file, ch)
-  for row := range ch {
-    fmt.Println(row)
-  }
+	defer file.Close()
+	ch := make(chan RawSegment)
+	go ReadSegmentLines(file, ch)
+	for row := range ch {
+		fmt.Println(row)
+	}
 }
 ```
