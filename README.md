@@ -20,7 +20,7 @@ package main
 import (
   "github.com/azoner/gox12"
   "log"
-	"os"
+  "os"
   "fmt"
 )
 
