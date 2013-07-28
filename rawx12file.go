@@ -1,7 +1,6 @@
-package main
+package gox12
 
 import (
-    "os"
     "bufio"
     //"bytes"
     "io"
@@ -10,24 +9,7 @@ import (
     "log"
 )
 
-func main() {
-    inFilename := "test834.txt"
-    //inFile *os.File
-    //inFile io.Reader
-    inFile, err := os.Open(inFilename)
-    if err != nil {
-        log.Fatal(err)
-        os.Exit(1)
-    }
-    defer inFile.Close()
-    ch := make(chan string)
-    go ReadSegmentLines(inFile, ch)
-    for row := range ch {
-        fmt.Println(row)
-    }
-}
-
-func ReadSegmentLines(inFile io.Reader, ch chan string) {
+func ReadSegmentLines(inFile io.Reader, ch chan RawSegment) {
     reader := bufio.NewReader(inFile)
     //buffer := bytes.NewBuffer(make([]byte, 0))
     first, err := reader.Peek(106)
@@ -38,6 +20,7 @@ func ReadSegmentLines(inFile io.Reader, ch chan string) {
     isa := string(first)
     delim := getDelimiters(isa)
     fmt.Println(delim)
+    ct := 0
     for {
         row, err := reader.ReadString(delim.SegmentTerm)
         if err == io.EOF {
@@ -46,27 +29,54 @@ func ReadSegmentLines(inFile io.Reader, ch chan string) {
             panic(err)
         }
         row = strings.Trim(row, "~\r\n")
-        ch <- row
+        mySeg := MakeSegment(row, delim)
+        ct++
+        seg := RawSegment{
+            mySeg,
+            delim,
+            ct,
+        }
+        ch <- seg
     }
     close(ch)
+}
+
+func MakeSegment(line string, delim Delimiters) (segment SegmentType) {
+    fields := strings.Split(line, string(delim.ElementTerm))
+    segment.SegmentId = fields[0]
+    segment.Elements =  fields[1:]
+    return
+}
+
+type SegmentType struct {
+    SegmentId string
+    Elements []string
+}
+
+type RawSegment struct {
+    Segment SegmentType
+    Terminators Delimiters
+    LineCount int
 }
 
 type Delimiters struct {
     SegmentTerm byte
     ElementTerm byte
     SubelementTerm byte
-    RetitionTerm byte
+    RepetitionTerm byte
 }
 
-func getDelimiters(first string) Delimiters {
+func getDelimiters(isa string) Delimiters {
     d := Delimiters{
-        first[len(first)-1],
-        first[3],
-        first[len(first)-2],
+        isa[len(isa)-1],
+        isa[3],
+        isa[len(isa)-2],
         0,
     }
-    if first[84:89] == "005010" {
-        d.SubelementTerm = first[82]
+    if isa[84:89] == "005010" {
+        d.SubelementTerm = isa[82]
     }
     return d
 }
+
+
