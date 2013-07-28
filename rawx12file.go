@@ -41,20 +41,8 @@ func ReadSegmentLines(inFile io.Reader, ch chan RawSegment) {
     close(ch)
 }
 
-func MakeSegment(line string, delim Delimiters) (segment SegmentType) {
-    fields := strings.Split(line, string(delim.ElementTerm))
-    segment.SegmentId = fields[0]
-    segment.Elements =  fields[1:]
-    return
-}
-
-type SegmentType struct {
-    SegmentId string
-    Elements []string
-}
-
 type RawSegment struct {
-    Segment SegmentType
+    Segment Segment
     Terminators Delimiters
     LineCount int
 }
