@@ -1,1 +1,5 @@
 language: go
+# whitelist
+branches:
+  only:
+      - master
