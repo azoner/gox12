@@ -9,20 +9,39 @@ import (
 	"strings"
 )
 
-func ReadSegmentLines(inFile io.Reader, ch chan RawSegment) {
-	reader := bufio.NewReader(inFile)
+const isa_length = 106
+
+type rawX12FileReader struct {
+    reader *Reader
+	SegmentTerm    byte
+	ElementTerm    byte
+	SubelementTerm byte
+	RepetitionTerm byte
+}
+
+func NewRawX12FileReader(inFile io.Reader) *rawX12FileReader, error {
+    r := new(rawX12FileReader)
+	r.reader := bufio.NewReader(inFile)
 	//buffer := bytes.NewBuffer(make([]byte, 0))
-	first, err := reader.Peek(106)
+	first, err := reader.Peek(isa_length)
 	if err != nil {
 		log.Fatal(err)
-		return
+		return nil, err
 	}
 	isa := string(first)
 	delim := getDelimiters(isa)
-	fmt.Println(delim)
+    r.SegmentTerm = delim.SegmentTerm
+    r.ElementTerm = delim.ElementTerm
+    r.SubelementTerm = delim.SubelementTerm
+    r.RepetitionTerm = delim.RepetitionTerm
+    return r, nil
+}
+
+func (r *rawX12FileReader) Iter() <-chan RawSegment) {
+    ch := make(chan RawSegment)
 	ct := 0
 	for {
-		row, err := reader.ReadString(delim.SegmentTerm)
+		row, err := r.reader.ReadString(delim.SegmentTerm)
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -38,7 +57,7 @@ func ReadSegmentLines(inFile io.Reader, ch chan RawSegment) {
 		}
 		ch <- seg
 	}
-	close(ch)
+	return ch
 }
 
 type RawSegment struct {
