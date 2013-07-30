@@ -58,7 +58,7 @@ func (r *rawX12FileReader) GetSegments() <-chan RawSegment {
 			}
 			ch <- seg
 		}
-        close(ch)
+		close(ch)
 	}()
 	return ch
 }
