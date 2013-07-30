@@ -18,19 +18,25 @@ func TestArbitraryDelimiters(t *testing.T) {
 	str1 += "GE&1&17+\n"
 	str1 += "IEA&1&000010121+\n"
 	inFile := strings.NewReader(str1)
-	ch := make(chan RawSegment)
-	go ReadSegmentLines(inFile, ch)
-	expectedDelimeters := Delimiters{'+', '&', '!', 0}
-	for seg := range ch {
-		//elementValue := getValue("REF03", segment)
-		if seg.Terminators != expectedDelimeters {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedDelimeters, seg.Terminators)
-		}
-	}
-	//self.assertEqual(ct, 7)
+    raw, err := NewRawX12FileReader(inFile)
+    if err != nil {
+        fmt.Println(err)
+    }
+	//expectedDelimeters := Delimiters{'+', '&', '!', 0}
+    expectedSegTerm := '+'
+    // segmentTerm
+    // elementTerm
+    // subelementTerm
+    // repetitionTerm
+    if raw.segmentTerm != byte(expectedSegTerm) {
+        t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedSegTerm, raw.segmentTerm)
+    }
+    for s := range raw.GetSegments() {
+        fmt.Println(s)
+    }
 }
 
-func TestParse834(t *testing.T) {
+func testParse834(t *testing.T) {
 	inFilename := "test834.txt"
 	//inFile *os.File
 	//inFile io.Reader
@@ -40,9 +46,8 @@ func TestParse834(t *testing.T) {
 		os.Exit(1)
 	}
 	defer inFile.Close()
-	ch := make(chan RawSegment)
-	go ReadSegmentLines(inFile, ch)
-	for row := range ch {
-		fmt.Println(row)
+    raw, err := NewRawX12FileReader(inFile)
+    for seg := range raw.GetSegments() {
+		fmt.Println(seg)
 	}
 }

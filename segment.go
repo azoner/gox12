@@ -9,8 +9,8 @@ type Segment struct {
 	Elements  []string
 }
 
-func MakeSegment(line string, delim Delimiters) (segment Segment) {
-	fields := strings.Split(line, string(delim.ElementTerm))
+func MakeSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) (segment Segment) {
+	fields := strings.Split(line, string(elementTerm))
 	segment.SegmentId = fields[0]
 	segment.Elements = fields[1:]
 	return
