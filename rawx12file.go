@@ -9,21 +9,12 @@ import (
 	"strings"
 )
 
-const isa_length = 106
-
-type rawX12FileReader struct {
-	reader         *bufio.Reader
-	segmentTerm    byte
-	elementTerm    byte
-	subelementTerm byte
-	repetitionTerm byte
-}
-
 func NewRawX12FileReader(inFile io.Reader) (*rawX12FileReader, error) {
+	const isaLength = 106
 	r := new(rawX12FileReader)
 	r.reader = bufio.NewReader(inFile)
 	//buffer := bytes.NewBuffer(make([]byte, 0))
-	first, err := r.reader.Peek(isa_length)
+	first, err := r.reader.Peek(isaLength)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -48,7 +39,9 @@ func (r *rawX12FileReader) GetSegments() <-chan RawSegment {
 			} else if err != nil {
 				panic(err)
 			}
-			row = row[:len(row)-1]
+			if strings.HasSuffix(row, string(r.segmentTerm)) {
+				row = row[:len(row)-1]
+			}
 			row = strings.Trim(row, "\r\n")
 			mySeg := MakeSegment(row, r.elementTerm, r.subelementTerm, r.repetitionTerm)
 			ct++
@@ -63,11 +56,21 @@ func (r *rawX12FileReader) GetSegments() <-chan RawSegment {
 	return ch
 }
 
+// X12 line reader and part delimiters
+type rawX12FileReader struct {
+	reader         *bufio.Reader
+	segmentTerm    byte
+	elementTerm    byte
+	subelementTerm byte
+	repetitionTerm byte
+}
+
 type RawSegment struct {
 	Segment   Segment
 	LineCount int
 }
 
+// Get the X12 delimiters specified in the ISA segment
 func getDelimiters(isa string) (segTerm byte, eleTerm byte, subeleTerm byte, repTerm byte) {
 	segTerm = isa[len(isa)-1]
 	eleTerm = isa[3]
