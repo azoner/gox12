@@ -1,0 +1,33 @@
+
+x12 path walk
+
+path is relative to Functional (ST) loop
+
+Each segment in an IG should have a unique path
+
+Given the current path, the next segment
+
+For a x12 path,
+	list of f, nil if not matched.  new path if matched
+first match wins
+from specific to general
+hardcode paths for ISA/GS/ST
+
+map[x12path][
+	[
+		func(seg) (newpath, error)
+	]
+]
+
+match func:
+	closure on
+	seg id
+	seg id, SEG01
+	seg id, SEG01-1
+	seg id, SEG02
+	loop repeats, resets?
+
+Another method to walk from x12path_start to x12path_end
+	counting, errors
+	requirement errors
+	iterator on traversed nodes
