@@ -50,7 +50,7 @@ func (r *rawX12FileReader) GetSegments() <-chan RawSegment {
 			}
 			row = row[:len(row)-1]
 			row = strings.Trim(row, "\r\n")
-			mySeg := MakeSegment(row, r.elementTerm, r.subelementTerm, r.repetitionTerm)
+			mySeg := NewSegment(row, r.elementTerm, r.subelementTerm, r.repetitionTerm)
 			ct++
 			seg := RawSegment{
 				mySeg,
@@ -58,7 +58,7 @@ func (r *rawX12FileReader) GetSegments() <-chan RawSegment {
 			}
 			ch <- seg
 		}
-        close(ch)
+		close(ch)
 	}()
 	return ch
 }
