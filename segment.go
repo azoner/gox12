@@ -31,3 +31,7 @@ func splitComposite(f2 string, term string) (ret []string) {
 	ret = strings.Split(f2, term)
 	return
 }
+
+func (s *Segment) GetValue(x12path string) (val string, err error) {
+    return
+}

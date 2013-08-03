@@ -13,3 +13,23 @@ func TestSegmentParseSegmentId(t *testing.T) {
 		t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedSegId, seg.SegmentId)
 	}
 }
+
+func TestSegmentParseComp01_1(t *testing.T) {
+	var segtests = []struct {
+		refdes string
+		expected string
+	}{
+		{"TST01-1", "AA"},
+	}
+	segmentStr := "TST&AA!1!1&BB!5"
+	seg := NewSegment(segmentStr, '&', '!', '^')
+	for _, tt := range segtests {
+		actual, err := seg.GetValue(tt.refdes)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
+		if actual != tt.expected {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.expected, actual)
+		}
+	}
+}
