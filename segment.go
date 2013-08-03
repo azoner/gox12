@@ -33,5 +33,5 @@ func splitComposite(f2 string, term string) (ret []string) {
 }
 
 func (s *Segment) GetValue(x12path string) (val string, err error) {
-    return
+	return
 }

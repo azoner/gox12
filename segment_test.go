@@ -16,7 +16,7 @@ func TestSegmentParseSegmentId(t *testing.T) {
 
 func TestSegmentParseComp01_1(t *testing.T) {
 	var segtests = []struct {
-		refdes string
+		refdes   string
 		expected string
 	}{
 		{"TST01-1", "AA"},

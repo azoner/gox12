@@ -19,8 +19,8 @@ package gox12
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
-    "strconv"
 )
 
 // x12 path
@@ -34,12 +34,6 @@ type X12Path struct {
 }
 
 func NewX12Path(path_str string) (x12path X12Path, err error) {
-	re_seg_id := "(?P<seg_id>[A-Z][A-Z0-9]{1,2})?"
-	re_id_val := "(\\[(?P<id_val>[A-Z0-9]+)\\])?"
-	re_ele_idx := "(?P<ele_idx>[0-9]{2})?"
-	re_subele_idx := "(-(?P<subele_idx>[0-9]+))?"
-	re_str := fmt.Sprintf("^%s%s%s%s$", re_seg_id, re_id_val, re_ele_idx, re_subele_idx)
-	re := regexp.MustCompile(re_str)
 
 	if path_str == "" {
 		x12path.isRelative = true
@@ -63,30 +57,16 @@ func NewX12Path(path_str string) (x12path X12Path, err error) {
 	}
 	if len(loops) > 0 {
 		seg_str := loops[len(loops)-1]
-		match := re.FindStringSubmatch(seg_str)
-		if match == nil {
+		seg_id, id_val, ele_idx, subele_idx, rerr := parseRefdes(seg_str)
+		if rerr != nil {
 			// no segment component
 			return
 		}
-		for i, name := range re.SubexpNames() {
-			// Ignore the whole regexp match and unnamed groups
-			if i == 0 || name == "" {
-				continue
-			}
-			switch name {
-			case "seg_id":
-				x12path.SegmentId = match[i]
-			case "id_val":
-				x12path.IdValue = match[i]
-			case "ele_idx":
-                v, _ := strconv.ParseInt(match[i], 10, 16)
-				x12path.ElementIdx = int(v)
-			case "subele_idx":
-                v, _ := strconv.ParseInt(match[i], 10, 16)
-				x12path.SubelementIdx = int(v)
-			}
-		}
-		x12path.Loops = x12path.Loops[:len(loops)-1]
+		x12path.SegmentId = seg_id
+		x12path.IdValue = id_val
+		x12path.ElementIdx = ele_idx
+		x12path.SubelementIdx = subele_idx
+		x12path.Loops = loops[:len(loops)-1]
 		if x12path.SegmentId == "" && x12path.IdValue != "" {
 			err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier with a qualifier", path_str)
 			return
@@ -94,6 +74,39 @@ func NewX12Path(path_str string) (x12path X12Path, err error) {
 		if x12path.SegmentId == "" && (x12path.ElementIdx != 0 || x12path.SubelementIdx != 0) && len(x12path.Loops) > 0 {
 			err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier", path_str)
 			return
+		}
+	}
+	return
+}
+
+func parseRefdes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int, err error) {
+	re_seg_id := "(?P<seg_id>[A-Z][A-Z0-9]{1,2})?"
+	re_id_val := "(\\[(?P<id_val>[A-Z0-9]+)\\])?"
+	re_ele_idx := "(?P<ele_idx>[0-9]{2})?"
+	re_subele_idx := "(-(?P<subele_idx>[0-9]+))?"
+	re_str := fmt.Sprintf("^%s%s%s%s$", re_seg_id, re_id_val, re_ele_idx, re_subele_idx)
+	re := regexp.MustCompile(re_str)
+	match := re.FindStringSubmatch(refdes)
+	if match == nil {
+		// no segment component
+		return
+	}
+	for i, name := range re.SubexpNames() {
+		// Ignore the whole regexp match and unnamed groups
+		if i == 0 || name == "" {
+			continue
+		}
+		switch name {
+		case "seg_id":
+			seg_id = match[i]
+		case "id_val":
+			id_val = match[i]
+		case "ele_idx":
+			v, _ := strconv.ParseInt(match[i], 10, 16)
+			ele_idx = int(v)
+		case "subele_idx":
+			v, _ := strconv.ParseInt(match[i], 10, 16)
+			subele_idx = int(v)
 		}
 	}
 	return
@@ -132,9 +145,9 @@ func (p *X12Path) FormatRefdes() string {
 		}
 	}
 	if p.ElementIdx > 0 {
-		parts = append(parts, fmt.Sprintf("%02i", p.ElementIdx))
+		parts = append(parts, fmt.Sprintf("%02d", p.ElementIdx))
 		if p.SubelementIdx > 0 {
-			parts = append(parts, fmt.Sprintf("-%i", p.SubelementIdx))
+			parts = append(parts, fmt.Sprintf("-%d", p.SubelementIdx))
 		}
 	}
 	return strings.Join(parts, "")
@@ -142,11 +155,11 @@ func (p *X12Path) FormatRefdes() string {
 
 func (p *X12Path) String() string {
 	var parts []string
-	if p.isRelative {
+	if !p.isRelative {
 		parts = append(parts, "/")
 	}
 	parts = append(parts, strings.Join(p.Loops, "/"))
-	if p.SegmentId == "" && len(p.Loops) > 0 {
+	if len(p.Loops) > 0 {
 		parts = append(parts, "/")
 	}
 	parts = append(parts, p.FormatRefdes())
