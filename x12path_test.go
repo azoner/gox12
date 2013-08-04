@@ -6,6 +6,25 @@ import (
 	"testing"
 )
 
+func BenchmarkSegmentParseFormatIdentity(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		fpath, _ := NewX12Path("/2000A/2000B/2300/2400/SV2[421]01")
+		_ = fpath.String()
+	}
+}
+
+func BenchmarkRefDes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = NewX12Path("N1[372]02-5")
+	}
+}
+
+func BenchmarkRelativePath(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = NewX12Path("1000A/1000B/TST[AA]02")
+	}
+}
+
 func TestSegmentParseFormatIdentity(t *testing.T) {
 	paths := [...]string{
 		"/2000A/2000B/2300/2400/SV2",

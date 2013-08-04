@@ -20,7 +20,7 @@ func TestArbitraryDelimiters(t *testing.T) {
 	inFile := strings.NewReader(str1)
 	raw, err := NewRawX12FileReader(inFile)
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
 	}
 	//expectedDelimeters := Delimiters{'+', '&', '!', 0}
 	expectedSegTerm := '+'
@@ -31,9 +31,9 @@ func TestArbitraryDelimiters(t *testing.T) {
 	if raw.segmentTerm != byte(expectedSegTerm) {
 		t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedSegTerm, raw.segmentTerm)
 	}
-	for s := range raw.GetSegments() {
-		fmt.Println(s)
-	}
+	//for s := range raw.GetSegments() {
+	//	//fmt.Println(s)
+	//}
 }
 
 func testParse834(t *testing.T) {
