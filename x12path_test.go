@@ -2,7 +2,7 @@ package gox12
 
 import (
 	//"fmt"
-    "strings"
+	"strings"
 	"testing"
 )
 
@@ -123,15 +123,15 @@ func TestRelativePath(t *testing.T) {
 }
 
 func stringSliceEquals(a, b []string) bool {
-    if len(a) != len(b) {
-        return false
-    }
-    for i, v := range a {
-        if v != b[i] {
-            return false
-        }
-    }
-    return true
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 /*

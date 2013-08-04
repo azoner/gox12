@@ -29,7 +29,7 @@ type X12Path struct {
 	IdValue       string
 	ElementIdx    int
 	SubelementIdx int
-	Relative    bool
+	Relative      bool
 	Loops         []string
 }
 
