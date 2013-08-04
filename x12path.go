@@ -29,21 +29,21 @@ type X12Path struct {
 	IdValue       string
 	ElementIdx    int
 	SubelementIdx int
-	isRelative    bool
+	Relative    bool
 	Loops         []string
 }
 
 func NewX12Path(path_str string) (x12path X12Path, err error) {
 
 	if path_str == "" {
-		x12path.isRelative = true
+		x12path.Relative = true
 		return
 	}
 	if path_str[0] == '/' {
-		x12path.isRelative = false
+		x12path.Relative = false
 		path_str = path_str[1:]
 	} else {
-		x12path.isRelative = true
+		x12path.Relative = true
 	}
 	loops := strings.Split(path_str, "/")
 	//if len(loops) == 0 {
@@ -114,7 +114,7 @@ func parseRefdes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int,
 
 // Is the path empty?
 func (x12path *X12Path) Empty() bool {
-	return x12path.isRelative == true && len(x12path.Loops) == 0 && x12path.SegmentId == "" && x12path.ElementIdx == 0
+	return x12path.Relative == true && len(x12path.Loops) == 0 && x12path.SegmentId == "" && x12path.ElementIdx == 0
 }
 
 /*
@@ -155,7 +155,7 @@ func (p *X12Path) FormatRefdes() string {
 
 func (p *X12Path) String() string {
 	var parts []string
-	if !p.isRelative {
+	if !p.Relative {
 		parts = append(parts, "/")
 	}
 	parts = append(parts, strings.Join(p.Loops, "/"))

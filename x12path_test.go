@@ -2,6 +2,7 @@ package gox12
 
 import (
 	//"fmt"
+    "strings"
 	"testing"
 )
 
@@ -72,37 +73,69 @@ func TestRefDes(t *testing.T) {
 	}
 }
 
+func TestRelativePath(t *testing.T) {
+	var tests = []struct {
+		spath     string
+		seg_id    string
+		qual      string
+		eleidx    int
+		subeleidx int
+		loops     []string
+	}{
+		{"AAA/TST", "TST", "", 0, 0, []string{"AAA"}},
+		{"B1000/TST02", "TST", "", 2, 0, []string{"B1000"}},
+		{"1000B/TST03-2", "TST", "", 3, 2, []string{"1000B"}},
+		{"1000A/1000B/TST[AA]02", "TST", "AA", 2, 0, []string{"1000A", "1000B"}},
+		{"AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, []string{"AA", "BB", "CC"}},
+		{"DDD/E1000/N102", "N1", "", 2, 0, []string{"DDD", "E1000"}},
+		{"E1000/D322/N102-5", "N1", "", 2, 5, []string{"E1000", "D322"}},
+		{"BB/CC/N1[AZR]02", "N1", "AZR", 2, 0, []string{"BB", "CC"}},
+		{"BB/CC/N1[372]02-5", "N1", "372", 2, 5, []string{"BB", "CC"}},
+	}
+	for _, tt := range tests {
+		actual, err := NewX12Path(tt.spath)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", actual)
+		}
+		if !actual.Relative {
+			t.Errorf("[%s] was not relative", tt.spath)
+		}
+		if actual.SegmentId != tt.seg_id {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.seg_id, actual.SegmentId)
+		}
+		if actual.IdValue != tt.qual {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.qual, actual.IdValue)
+		}
+		if actual.ElementIdx != tt.eleidx {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.eleidx, actual.ElementIdx)
+		}
+		if actual.SubelementIdx != tt.subeleidx {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.subeleidx, actual.SubelementIdx)
+		}
+		if strings.Join(actual.Loops, "/") != strings.Join(tt.loops, "/") {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", strings.Join(tt.loops, "/"), strings.Join(actual.Loops, "/"))
+		}
+		path := actual.String()
+		if path != tt.spath {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.spath, path)
+		}
+	}
+}
+
+func stringSliceEquals(a, b []string) bool {
+    if len(a) != len(b) {
+        return false
+    }
+    for i, v := range a {
+        if v != b[i] {
+            return false
+        }
+    }
+    return true
+}
+
 /*
 class RefDes(unittest.TestCase):
-    def test_refdes(self):
-        tests = [
-            ("TST", "TST", None, None, None),
-            ("TST02", "TST", None, 2, None),
-            ("TST03-2", "TST", None, 3, 2),
-            ("TST[AA]02", "TST", "AA", 2, None),
-            ("TST[1B5]03-1", "TST", "1B5", 3, 1),
-            ("03", None, None, 3, None),
-            ("03-2", None, None, 3, 2),
-            ("N102", "N1", None, 2, None),
-            ("N102-5", "N1", None, 2, 5),
-            ("N1[AZR]02", "N1", "AZR", 2, None),
-            ("N1[372]02-5", "N1", "372", 2, 5)
-        ]
-        for (spath, seg_id, qual, eleidx, subeleidx) in tests:
-            rd = pyx12.path.X12Path(spath)
-            self.assertEqual(rd.seg_id, seg_id,
-                             "%s: %s != %s" % (spath, rd.seg_id, seg_id))
-            self.assertEqual(rd.id_val, qual, "%s: %s != %s" %
-                             (spath, rd.id_val, qual))
-            self.assertEqual(rd.ele_idx, eleidx,
-                             "%s: %s != %s" % (spath, rd.ele_idx, eleidx))
-            self.assertEqual(rd.subele_idx, subeleidx, "%s: %s != %s" %
-                             (spath, rd.subele_idx, subeleidx))
-            self.assertEqual(rd.format(), spath,
-                             "%s: %s != %s" % (spath, rd.format(), spath))
-            self.assertEqual(rd.loop_list, [],
-                             "%s: Loop list is not empty" % (spath))
-
 
     def testLoopOK1(self):
         path_str = "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400"
@@ -118,36 +151,6 @@ class RefDes(unittest.TestCase):
         self.assertEqual(path.seg_id, "SV2")
 
 
-class RelativePath(unittest.TestCase):
-    def test_rel_paths(self):
-        tests = [
-            ("AAA/TST", "TST", None, None, None, ["AAA"]),
-            ("B1000/TST02", "TST", None, 2, None, ["B1000"]),
-            ("1000B/TST03-2", "TST", None, 3, 2, ["1000B"]),
-            ("1000A/1000B/TST[AA]02", "TST", "AA", 2, None, [
-                "1000A", "1000B"]),
-            ("AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, ["AA", "BB", "CC"]),
-            ("DDD/E1000/N102", "N1", None, 2, None, ["DDD", "E1000"]),
-            ("E1000/D322/N102-5", "N1", None, 2, 5, ["E1000", "D322"]),
-            ("BB/CC/N1[AZR]02", "N1", "AZR", 2, None, ["BB", "CC"]),
-            ("BB/CC/N1[372]02-5", "N1", "372", 2, 5, ["BB", "CC"])
-        ]
-        for (spath, seg_id, qual, eleidx, subeleidx, plist) in tests:
-            rd = pyx12.path.X12Path(spath)
-            self.assertEqual(rd.relative, True,
-                             "%s: %s != %s" % (spath, rd.relative, True))
-            self.assertEqual(rd.seg_id, seg_id,
-                             "%s: %s != %s" % (spath, rd.seg_id, seg_id))
-            self.assertEqual(rd.id_val, qual, "%s: %s != %s" %
-                             (spath, rd.id_val, qual))
-            self.assertEqual(rd.ele_idx, eleidx,
-                             "%s: %s != %s" % (spath, rd.ele_idx, eleidx))
-            self.assertEqual(rd.subele_idx, subeleidx, "%s: %s != %s" %
-                             (spath, rd.subele_idx, subeleidx))
-            self.assertEqual(rd.format(), spath,
-                             "%s: %s != %s" % (spath, rd.format(), spath))
-            self.assertEqual(rd.loop_list, plist,
-                             "%s: %s != %s" % (spath, rd.loop_list, plist))
 
     def test_bad_rel_paths(self):
         bad_paths = [

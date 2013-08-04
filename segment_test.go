@@ -19,7 +19,7 @@ func TestSegmentParseComp01_1(t *testing.T) {
 		refdes   string
 		expected string
 	}{
-		{"TST01-1", "AA"},
+		{"TST01-1", ""},
 	}
 	segmentStr := "TST&AA!1!1&BB!5"
 	seg := NewSegment(segmentStr, '&', '!', '^')
