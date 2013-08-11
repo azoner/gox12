@@ -79,37 +79,39 @@ func NewX12Path(path_str string) (x12path X12Path, err error) {
 	return
 }
 
-func parseRefdes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int, err error) {
+func RefdesParser(refdes string) func(seg_id, id_val string, ele_idx, subele_idx int, err error) {
 	re_seg_id := "(?P<seg_id>[A-Z][A-Z0-9]{1,2})?"
 	re_id_val := "(\\[(?P<id_val>[A-Z0-9]+)\\])?"
 	re_ele_idx := "(?P<ele_idx>[0-9]{2})?"
 	re_subele_idx := "(-(?P<subele_idx>[0-9]+))?"
 	re_str := fmt.Sprintf("^%s%s%s%s$", re_seg_id, re_id_val, re_ele_idx, re_subele_idx)
 	re := regexp.MustCompile(re_str)
-	match := re.FindStringSubmatch(refdes)
-	if match == nil {
-		// no segment component
-		return
-	}
-	for i, name := range re.SubexpNames() {
-		// Ignore the whole regexp match and unnamed groups
-		if i == 0 || name == "" {
-			continue
+	anon := func(seg_id, id_val string, ele_idx, subele_idx int, err error) {
+		match := re.FindStringSubmatch(refdes)
+		if match == nil {
+			// no segment component
+			return
 		}
-		switch name {
-		case "seg_id":
-			seg_id = match[i]
-		case "id_val":
-			id_val = match[i]
-		case "ele_idx":
-			v, _ := strconv.ParseInt(match[i], 10, 16)
-			ele_idx = int(v)
-		case "subele_idx":
-			v, _ := strconv.ParseInt(match[i], 10, 16)
-			subele_idx = int(v)
+		for i, name := range re.SubexpNames() {
+			// Ignore the whole regexp match and unnamed groups
+			if i == 0 || name == "" {
+				continue
+			}
+			switch name {
+			case "seg_id":
+				seg_id = match[i]
+			case "id_val":
+				id_val = match[i]
+			case "ele_idx":
+				v, _ := strconv.ParseInt(match[i], 10, 16)
+				ele_idx = int(v)
+			case "subele_idx":
+				v, _ := strconv.ParseInt(match[i], 10, 16)
+				subele_idx = int(v)
+			}
 		}
-	}
-	return
+	}()
+	return anon
 }
 
 // Is the path empty?
