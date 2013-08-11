@@ -13,9 +13,9 @@ type Segment struct {
 
 //type Composite []string
 
-func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) (segment Segment) {
+func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) Segment {
 	fields := strings.Split(line, string(elementTerm))
-	segment.SegmentId = fields[0]
+    segmentId := fields[0]
 	comps := make([][]string, len(fields)-1)
 	for i, v := range fields[1:] {
 		c := strings.Split(v, string(subelementTerm))
@@ -23,8 +23,7 @@ func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte
 		copy(t, c)
 		comps[i] = t
 	}
-	segment.Composites = comps
-	return
+	return Segment{segmentId, comps}
 }
 
 func splitComposite(f2 string, term string) (ret []string) {
