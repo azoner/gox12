@@ -208,7 +208,7 @@ func (x12path *X12Path) Empty() bool {
 */
 
 // Assemble the segment parts of a X12Path into a string
-func (p *X12Path) FormatRefdes() string {
+func (p *X12Path) formatRefdes() string {
 	var parts []string
 	if p.SegmentId != "" {
 		parts = append(parts, p.SegmentId)
@@ -232,7 +232,7 @@ func (p *X12Path) String() string {
 	if p.Path != "" {
 		buf.WriteString(p.Path)
 	}
-	rd := p.FormatRefdes()
+	rd := p.formatRefdes()
 	if p.Path != "" && rd != "" {
 		buf.WriteByte('/')
 	}
