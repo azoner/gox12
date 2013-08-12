@@ -37,7 +37,15 @@ func main() {
                 fmt.Println(err)
         }
         for rs := range raw.GetSegments() {
-                fmt.Println(rs)
+                if rs.Segment.SegmentId == "INS" {
+                        fmt.Println(rs)
+                        v, _, _ := rs.Segment.GetValue("INS01")
+                        fmt.Println(v)
+                        for v := range rs.Segment.GetAllValues() {
+                                fmt.Println(v.X12Path, v.Value)
+                        }
+                        fmt.Println()
+                }
         }
 }
 
