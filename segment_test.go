@@ -19,17 +19,24 @@ func TestSegmentParseComp01_1(t *testing.T) {
 		refdes   string
 		expected string
 	}{
-		{"TST01-1", ""},
+		{"TST01-1", "AA"},
+		{"TST01-2", "1"},
+		{"TST01-3", "5"},
+		{"TST02-1", "BB"},
+		//{"TST03", ""},
 	}
-	segmentStr := "TST&AA!1!1&BB!5"
+	segmentStr := "TST&AA!1!5&BB!5"
 	seg := NewSegment(segmentStr, '&', '!', '^')
 	for _, tt := range segtests {
-		actual, err := seg.GetValue(tt.refdes)
+		actual, found, err := seg.GetValue(tt.refdes)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", tt.refdes)
 		}
+		if !found {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
 		if actual != tt.expected {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.expected, actual)
+			t.Errorf("Didn't get expected result [%s] for path [%s], instead got [%s]", tt.expected, tt.refdes, actual)
 		}
 	}
 }

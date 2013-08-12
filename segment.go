@@ -6,12 +6,9 @@ import (
 )
 
 type Segment struct {
-	SegmentId string
-	//Composites []Composite
+	SegmentId  string
 	Composites [][]string
 }
-
-//type Composite []string
 
 func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) Segment {
 	fields := strings.Split(line, string(elementTerm))
@@ -23,11 +20,6 @@ func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte
 	}
 	return Segment{segmentId, comps}
 }
-
-//func splitComposite(f2 string, term string) (ret []string) {
-//	ret = strings.Split(f2, term)
-//	return
-//}
 
 // Acts like golang maps, if not found, returns default value with found==false
 // X12 Path indices are 1-based
@@ -50,7 +42,7 @@ func (s *Segment) GetValue(x12path string) (val string, found bool, err error) {
 		}
 		mySubeleIdx = 0
 	} else {
-		mySubeleIdx = xpath.ElementIdx - 1
+		mySubeleIdx = xpath.SubelementIdx - 1
 	}
 	if myEleIdx < len(s.Composites) {
 		if mySubeleIdx < len(s.Composites[myEleIdx]) {
@@ -80,3 +72,10 @@ func (s *Segment) GetAllValues() <-chan ElementValue {
 	}()
 	return ch
 }
+
+//func splitComposite(f2 string, term string) (ret []string) {
+//	ret = strings.Split(f2, term)
+//	return
+//}
+
+//type Composite []string
