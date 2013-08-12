@@ -14,27 +14,30 @@ Installation
 Example
 -----
 
-```go
-package main
+```package main
 
 import (
-	"github.com/azoner/gox12"
-	"log"
-	"os"
-	"fmt"
+        "fmt"
+        "os"
+        "log"
+        "github.com/azoner/gox12"
 )
 
 func main() {
-	file, err := os.Open("testx12.txt")
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
-	}
-	defer file.Close()
-	ch := make(chan RawSegment)
-	go ReadSegmentLines(file, ch)
-	for row := range ch {
-		fmt.Println(row)
-	}
+        inFilename := "x12file.txt"
+        inFile, err := os.Open(inFilename)
+        if err != nil {
+                log.Fatal(err)
+                os.Exit(1)
+        }
+        defer inFile.Close()
+        raw, err := gox12.NewRawX12FileReader(inFile)
+        if err != nil {
+                fmt.Println(err)
+        }
+        for rs := range raw.GetSegments() {
+                fmt.Println(rs)
+        }
 }
+
 ```
