@@ -35,9 +35,8 @@ func TestSegmentParseComp01_1(t *testing.T) {
 }
 
 func BenchmarkSegmentParse(b *testing.B) {
-    str2 := "TST&AA!1!1&BB!5"
-    for i := 0; i < b.N; i++ {
-        _ = NewSegment(str2, '&', '!', '^')
-    }
+	str2 := "TST&AA!1!1&BB!5"
+	for i := 0; i < b.N; i++ {
+		_ = NewSegment(str2, '&', '!', '^')
+	}
 }
-

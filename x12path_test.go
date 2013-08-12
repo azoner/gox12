@@ -2,7 +2,6 @@ package gox12
 
 import (
 	//"fmt"
-	"strings"
 	"testing"
 )
 
@@ -99,17 +98,17 @@ func TestRelativePath(t *testing.T) {
 		qual      string
 		eleidx    int
 		subeleidx int
-		loops     []string
+		path      string
 	}{
-		{"AAA/TST", "TST", "", 0, 0, []string{"AAA"}},
-		{"B1000/TST02", "TST", "", 2, 0, []string{"B1000"}},
-		{"1000B/TST03-2", "TST", "", 3, 2, []string{"1000B"}},
-		{"1000A/1000B/TST[AA]02", "TST", "AA", 2, 0, []string{"1000A", "1000B"}},
-		{"AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, []string{"AA", "BB", "CC"}},
-		{"DDD/E1000/N102", "N1", "", 2, 0, []string{"DDD", "E1000"}},
-		{"E1000/D322/N102-5", "N1", "", 2, 5, []string{"E1000", "D322"}},
-		{"BB/CC/N1[AZR]02", "N1", "AZR", 2, 0, []string{"BB", "CC"}},
-		{"BB/CC/N1[372]02-5", "N1", "372", 2, 5, []string{"BB", "CC"}},
+		{"AAA/TST", "TST", "", 0, 0, "AAA"},
+		{"B1000/TST02", "TST", "", 2, 0, "B1000"},
+		{"1000B/TST03-2", "TST", "", 3, 2, "1000B"},
+		{"1000A/1000B/TST[AA]02", "TST", "AA", 2, 0, "1000A/1000B"},
+		{"AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, "AA/BB/CC"},
+		{"DDD/E1000/N102", "N1", "", 2, 0, "DDD/E1000"},
+		{"E1000/D322/N102-5", "N1", "", 2, 5, "E1000/D322"},
+		{"BB/CC/N1[AZR]02", "N1", "AZR", 2, 0, "BB/CC"},
+		{"BB/CC/N1[372]02-5", "N1", "372", 2, 5, "BB/CC"},
 	}
 	for _, tt := range tests {
 		actual, err := ParseX12Path(tt.spath)
@@ -131,8 +130,8 @@ func TestRelativePath(t *testing.T) {
 		if actual.SubelementIdx != tt.subeleidx {
 			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.subeleidx, actual.SubelementIdx)
 		}
-		if actual.Path != strings.Join(tt.loops, "/") {
-            t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", strings.Join(tt.loops, "/"), actual.Path)
+		if actual.Path != tt.path {
+			t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", tt.path, actual.Path)
 		}
 		path := actual.String()
 		if path != tt.spath {

@@ -15,7 +15,7 @@ type Segment struct {
 
 func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) Segment {
 	fields := strings.Split(line, string(elementTerm))
-    segmentId := fields[0]
+	segmentId := fields[0]
 	comps := make([][]string, len(fields)-1)
 	for i, v := range fields[1:] {
 		c := strings.Split(v, string(subelementTerm))
