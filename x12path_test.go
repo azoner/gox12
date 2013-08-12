@@ -8,20 +8,20 @@ import (
 
 func BenchmarkSegmentParseFormatIdentity(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		fpath, _ := NewX12Path("/2000A/2000B/2300/2400/SV2[421]01")
+		fpath, _ := ParseX12Path("/2000A/2000B/2300/2400/SV2[421]01")
 		_ = fpath.String()
 	}
 }
 
 func BenchmarkRefDes(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = NewX12Path("N1[372]02-5")
+		_, _ = ParseX12Path("N1[372]02-5")
 	}
 }
 
 func BenchmarkRelativePath(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = NewX12Path("1000A/1000B/TST[AA]02")
+		_, _ = ParseX12Path("1000A/1000B/TST[AA]02")
 	}
 }
 
@@ -33,7 +33,7 @@ func TestSegmentParseFormatIdentity(t *testing.T) {
 	}
 	for _, p := range paths {
 		//fmt.Println(p)
-		fpath, err := NewX12Path(p)
+		fpath, err := ParseX12Path(p)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", p)
 		}
@@ -66,7 +66,7 @@ func TestRefDes(t *testing.T) {
 		{"N1[372]02-5", "N1", "372", 2, 5},
 	}
 	for _, tt := range tests {
-		actual, err := NewX12Path(tt.spath)
+		actual, err := ParseX12Path(tt.spath)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", actual)
 		}
@@ -82,8 +82,8 @@ func TestRefDes(t *testing.T) {
 		if actual.SubelementIdx != tt.subeleidx {
 			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.subeleidx, actual.SubelementIdx)
 		}
-		if len(actual.Loops) != 0 {
-			t.Errorf("Loops is not empty")
+		if len(actual.Path) != 0 {
+			t.Errorf("Path is not empty")
 		}
 		path := actual.String()
 		if path != tt.spath {
@@ -112,11 +112,11 @@ func TestRelativePath(t *testing.T) {
 		{"BB/CC/N1[372]02-5", "N1", "372", 2, 5, []string{"BB", "CC"}},
 	}
 	for _, tt := range tests {
-		actual, err := NewX12Path(tt.spath)
+		actual, err := ParseX12Path(tt.spath)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", actual)
 		}
-		if !actual.Relative {
+		if actual.IsAbs() {
 			t.Errorf("[%s] was not relative", tt.spath)
 		}
 		if actual.SegmentId != tt.seg_id {
@@ -131,12 +131,12 @@ func TestRelativePath(t *testing.T) {
 		if actual.SubelementIdx != tt.subeleidx {
 			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.subeleidx, actual.SubelementIdx)
 		}
-		if strings.Join(actual.Loops, "/") != strings.Join(tt.loops, "/") {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", strings.Join(tt.loops, "/"), strings.Join(actual.Loops, "/"))
+		if actual.Path != strings.Join(tt.loops, "/") {
+            t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", strings.Join(tt.loops, "/"), actual.Path)
 		}
 		path := actual.String()
 		if path != tt.spath {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.spath, path)
+			t.Errorf("String Didn't get expected result [%s], instead got [%s]", tt.spath, path)
 		}
 	}
 }
