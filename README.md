@@ -14,7 +14,8 @@ Installation
 Example
 -----
 
-```package main
+```go
+package main
 
 import (
         "fmt"
