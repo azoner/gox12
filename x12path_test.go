@@ -154,8 +154,9 @@ func stringSliceEquals(a, b []string) bool {
 
 func TestRefDesMatchingNone(t *testing.T) {
 	tpath := "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400"
-	if actual, err := ParseX12Path(tpath); err != nil {
-		t.Errorf("Didn't get a value for [%s]", tpath)
+	actual, err := ParseX12Path(tpath)
+	if err != nil {
+		t.Errorf("Didn't get a value for [%s], error is [%s]", tpath, err.Error())
 	}
 	apath := actual.String()
 	if apath != tpath {

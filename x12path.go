@@ -70,8 +70,9 @@ func ParseX12Path(rawpath string) (x12path *X12Path, err error) {
 	var subele_idx int
 	if seg_id, id_val, ele_idx, subele_idx, err = parseRefDes(refdes); err != nil {
 		// not a segment
+		fmt.Println(err.Error())
 		x12path.Path = rawpath
-		return nil, err
+		return x12path, nil
 	}
 	if basepath != "" && basepath[len(basepath)-1] == '/' {
 		x12path.Path = basepath[:len(basepath)-1]
