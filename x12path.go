@@ -64,33 +64,35 @@ func ParseX12Path(rawpath string) (x12path *X12Path, err error) {
 	x12path = new(X12Path)
 	// set struct values...
 	basepath, refdes := path.Split(rawpath)
+	var found bool
 	var seg_id string
 	var id_val string
 	var ele_idx int
 	var subele_idx int
-	if seg_id, id_val, ele_idx, subele_idx, err = parseRefDes(refdes); err != nil {
+	if found, seg_id, id_val, ele_idx, subele_idx, err = parseRefDes(refdes); err != nil {
 		// not a segment
 		fmt.Println(err.Error())
+		return nil, err
+	}
+	if !found {
 		x12path.Path = rawpath
 		return x12path, nil
 	}
 	if basepath != "" && basepath[len(basepath)-1] == '/' {
 		x12path.Path = basepath[:len(basepath)-1]
 	}
+	if seg_id == "" && id_val != "" {
+		err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier with a qualifier", rawpath)
+		return nil, err
+	}
+	if seg_id == "" && (ele_idx != 0 || subele_idx != 0) && len(x12path.Path) > 0 {
+		err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier", rawpath)
+		return nil, err
+	}
 	x12path.SegmentId = seg_id
 	x12path.IdValue = id_val
 	x12path.ElementIdx = ele_idx
 	x12path.SubelementIdx = subele_idx
-
-	/*
-		if x12path.SegmentId == "" && x12path.IdValue != "" {
-			err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier with a qualifier", path_str)
-			return
-		}
-		if x12path.SegmentId == "" && (x12path.ElementIdx != 0 || x12path.SubelementIdx != 0) && len(x12path.Loops) > 0 {
-			err = fmt.Errorf("Path '%s' is invalid. Must specify a segment identifier", path_str)
-			return
-		} */
 	return x12path, nil
 }
 
@@ -144,19 +146,22 @@ func parseRefDes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int,
     }
 */
 
-func parseRefDes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int, err error) {
+func parseRefDes(refdes string) (found bool, seg_id, id_val string, ele_idx, subele_idx int, err error) {
 	//  failure 1 - idx not int, depend not satisfied
 	// failure 2 - is not a refdes
 	if refdes == "" {
-		err = errors.New("empty refdes")
+		found = false
+		//err = errors.New("empty refdes")
 		return
 	}
 	match := refdesRegexp.FindStringSubmatch(refdes)
 	if match == nil {
+		found = false
 		// no segment component
-		err = errors.New("Not a refdes")
+		//err = errors.New("Not a refdes")
 		return
 	}
+	found = true
 	for i, name := range refdesRegexp.SubexpNames() {
 		// Ignore the whole regexp match and unnamed groups
 		if i == 0 || name == "" {
@@ -175,7 +180,7 @@ func parseRefDes(refdes string) (seg_id, id_val string, ele_idx, subele_idx int,
 			subele_idx = int(v)
 		}
 	}
-	return seg_id, id_val, ele_idx, subele_idx, nil
+	return found, seg_id, id_val, ele_idx, subele_idx, nil
 }
 
 // Is the path empty?
