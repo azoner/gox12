@@ -152,24 +152,51 @@ func stringSliceEquals(a, b []string) bool {
 	return true
 }
 
+func TestRefDesMatchingNone(t *testing.T) {
+	tpath := "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400"
+	if actual, err := ParseX12Path(tpath); err != nil {
+		t.Errorf("Didn't get a value for [%s]", tpath)
+	}
+	apath := actual.String()
+	if apath != tpath {
+		t.Errorf("Didn't get expected result [%s], instead got [%s]", tpath, apath)
+	}
+	if actual.SegmentId != "" {
+		t.Errorf("Didn't get expected result [%s], instead got [%s]", "", actual.SegmentId)
+	}
+}
+
+func TestRefDesMatchingOk(t *testing.T) {
+	tpath := "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400/SV2"
+	actual, err := ParseX12Path(tpath)
+	if err != nil {
+		t.Errorf("Didn't get a value for [%s]", tpath)
+	}
+	apath := actual.String()
+	if apath != tpath {
+		t.Errorf("Didn't get expected result [%s], instead got [%s]", tpath, apath)
+	}
+	if actual.SegmentId != "SV2" {
+		t.Errorf("Didn't get expected result [%s], instead got [%s]", "SV2", actual.SegmentId)
+	}
+}
+
+func TestBadRelativePaths(t *testing.T) {
+	var tests = []struct {
+		spath string
+	}{
+		{"AAA/03"},
+		{"BB/CC/03-2"},
+	}
+	for _, tt := range tests {
+		actual, err := ParseX12Path(tt.spath)
+		if err == nil {
+			t.Errorf("Path should be invalid Didn't get a value for [%s]", actual)
+		}
+	}
+}
+
 /*
-class RefDes(unittest.TestCase):
-
-    def testLoopOK1(self):
-        path_str = "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400"
-        path = pyx12.path.X12Path(path_str)
-        self.assertEqual(path_str, path.format())
-        self.assertEqual(path.seg_id, None)
-        self.assertEqual(path.loop_list[2], "ST_LOOP")
-
-    def testLoopSegOK1(self):
-        path_str = "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400/SV2"
-        path = pyx12.path.X12Path(path_str)
-        self.assertEqual(path_str, path.format())
-        self.assertEqual(path.seg_id, "SV2")
-
-
-
     def test_bad_rel_paths(self):
         bad_paths = [
             "AA/03",
