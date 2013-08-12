@@ -91,55 +91,6 @@ func TestRefDes(t *testing.T) {
 	}
 }
 
-func TestRelativePath(t *testing.T) {
-	var tests = []struct {
-		spath     string
-		seg_id    string
-		qual      string
-		eleidx    int
-		subeleidx int
-		path      string
-	}{
-		{"AAA/TST", "TST", "", 0, 0, "AAA"},
-		{"B1000/TST02", "TST", "", 2, 0, "B1000"},
-		{"1000B/TST03-2", "TST", "", 3, 2, "1000B"},
-		{"1000A/1000B/TST[AA]02", "TST", "AA", 2, 0, "1000A/1000B"},
-		{"AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, "AA/BB/CC"},
-		{"DDD/E1000/N102", "N1", "", 2, 0, "DDD/E1000"},
-		{"E1000/D322/N102-5", "N1", "", 2, 5, "E1000/D322"},
-		{"BB/CC/N1[AZR]02", "N1", "AZR", 2, 0, "BB/CC"},
-		{"BB/CC/N1[372]02-5", "N1", "372", 2, 5, "BB/CC"},
-	}
-	for _, tt := range tests {
-		actual, err := ParseX12Path(tt.spath)
-		if err != nil {
-			t.Errorf("Didn't get a value for [%s]", actual)
-		}
-		if actual.IsAbs() {
-			t.Errorf("[%s] was not relative", tt.spath)
-		}
-		if actual.SegmentId != tt.seg_id {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.seg_id, actual.SegmentId)
-		}
-		if actual.IdValue != tt.qual {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.qual, actual.IdValue)
-		}
-		if actual.ElementIdx != tt.eleidx {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.eleidx, actual.ElementIdx)
-		}
-		if actual.SubelementIdx != tt.subeleidx {
-			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.subeleidx, actual.SubelementIdx)
-		}
-		if actual.Path != tt.path {
-			t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", tt.path, actual.Path)
-		}
-		path := actual.String()
-		if path != tt.spath {
-			t.Errorf("String Didn't get expected result [%s], instead got [%s]", tt.spath, path)
-		}
-	}
-}
-
 func stringSliceEquals(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
@@ -182,12 +133,14 @@ func TestRefDesMatchingOk(t *testing.T) {
 	}
 }
 
-func TestBadRelativePaths(t *testing.T) {
+func TestBadPaths(t *testing.T) {
 	var tests = []struct {
 		spath string
 	}{
 		{"AAA/03"},
 		{"BB/CC/03-2"},
+		{"/AAA/03"},
+		{"/BB/CC/03-2"},
 	}
 	for _, tt := range tests {
 		actual, err := ParseX12Path(tt.spath)
@@ -197,88 +150,120 @@ func TestBadRelativePaths(t *testing.T) {
 	}
 }
 
+func TestX12PathGeneralNoSegment(t *testing.T) {
+	var tests = []struct {
+		spath   string
+		x12Path X12Path
+	}{
+		{"ISA_LOOP/GS_LOOP", X12Path{Path: "ISA_LOOP/GS_LOOP"}},
+		{"GS_LOOP", X12Path{Path: "GS_LOOP"}},
+		{"ST_LOOP/DETAIL/2000", X12Path{Path: "ST_LOOP/DETAIL/2000"}},
+		{"GS_LOOP/ST_LOOP/DETAIL/2000A", X12Path{Path: "GS_LOOP/ST_LOOP/DETAIL/2000A"}},
+		{"DETAIL/2000A/2000B", X12Path{Path: "DETAIL/2000A/2000B"}},
+		{"2000A/2000B/2300", X12Path{Path: "2000A/2000B/2300"}},
+		{"2000B/2300/2400", X12Path{Path: "2000B/2300/2400"}},
+		{"ST_LOOP/HEADER", X12Path{Path: "ST_LOOP/HEADER"}},
+		{"ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A", X12Path{Path: "ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A"}},
+		{"GS_LOOP/ST_LOOP/HEADER/1000B", X12Path{Path: "GS_LOOP/ST_LOOP/HEADER/1000B"}},
+		{"/ISA_LOOP/GS_LOOP", X12Path{Path: "/ISA_LOOP/GS_LOOP"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A"}},
+		{"/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000B", X12Path{Path: "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000B"}},
+	}
+	for _, tt := range tests {
+		actual, err := ParseX12Path(tt.spath)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", tt.spath)
+		}
+		if actual.IsAbs() != tt.x12Path.IsAbs() {
+			t.Errorf("[%s] was not relative", tt.spath)
+		}
+		if actual.SegmentId != "" {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", "", actual.SegmentId)
+		}
+		if actual.IdValue != "" {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", "", actual.IdValue)
+		}
+		if actual.ElementIdx != 0 {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", 0, actual.ElementIdx)
+		}
+		if actual.SubelementIdx != 0 {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", 0, actual.SubelementIdx)
+		}
+		if actual.Path != tt.x12Path.Path {
+			t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", tt.x12Path.Path, actual.Path)
+		}
+		path := actual.String()
+		if path != tt.x12Path.String() {
+			t.Errorf("String Didn't get expected result [%s], instead got [%s]", tt.x12Path.String(), path)
+		}
+	}
+}
+
+func TestX12PathGeneral(t *testing.T) {
+	var tests = []struct {
+		spath   string
+		x12Path X12Path
+	}{
+		{"/AAA/TST", X12Path{"/AAA", "TST", "", 0, 0}},
+		{"/B1000/TST02", X12Path{"/B1000", "TST", "", 2, 0}},
+		{"/1000B/TST03-2", X12Path{"/1000B", "TST", "", 3, 2}},
+		{"/1000A/1000B/TST[AA]02", X12Path{"/1000A/1000B", "TST", "AA", 2, 0}},
+		{"/AA/BB/CC/TST[1B5]03-1", X12Path{"/AA/BB/CC", "TST", "1B5", 3, 1}},
+		{"/DDD/E1000/N102", X12Path{"/DDD/E1000", "N1", "", 2, 0}},
+		{"/E1000/D322/N102-5", X12Path{"/E1000/D322", "N1", "", 2, 5}},
+		{"/BB/CC/N1[AZR]02", X12Path{"/BB/CC", "N1", "AZR", 2, 0}},
+		{"/BB/CC/N1[372]02-5", X12Path{"/BB/CC", "N1", "372", 2, 5}},
+		{"AAA/TST", X12Path{"AAA", "TST", "", 0, 0}},
+		{"B1000/TST02", X12Path{"B1000", "TST", "", 2, 0}},
+		{"1000B/TST03-2", X12Path{"1000B", "TST", "", 3, 2}},
+		{"1000A/1000B/TST[AA]02", X12Path{"1000A/1000B", "TST", "AA", 2, 0}},
+		{"AA/BB/CC/TST[1B5]03-1", X12Path{"AA/BB/CC", "TST", "1B5", 3, 1}},
+		{"DDD/E1000/N102", X12Path{"DDD/E1000", "N1", "", 2, 0}},
+		{"E1000/D322/N102-5", X12Path{"E1000/D322", "N1", "", 2, 5}},
+		{"BB/CC/N1[AZR]02", X12Path{"BB/CC", "N1", "AZR", 2, 0}},
+		{"BB/CC/N1[372]02-5", X12Path{"BB/CC", "N1", "372", 2, 5}},
+	}
+	for _, tt := range tests {
+		actual, err := ParseX12Path(tt.spath)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", tt.spath)
+		}
+		if actual.IsAbs() != tt.x12Path.IsAbs() {
+			t.Errorf("[%s] was not relative", tt.spath)
+		}
+		if actual.SegmentId != tt.x12Path.SegmentId {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.x12Path.SegmentId, actual.SegmentId)
+		}
+		if actual.IdValue != tt.x12Path.IdValue {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.x12Path.IdValue, actual.IdValue)
+		}
+		if actual.ElementIdx != tt.x12Path.ElementIdx {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.x12Path.ElementIdx, actual.ElementIdx)
+		}
+		if actual.SubelementIdx != tt.x12Path.SubelementIdx {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.x12Path.SubelementIdx, actual.SubelementIdx)
+		}
+		if actual.Path != tt.x12Path.Path {
+			t.Errorf("Path: Didn't get expected result [%s], instead got [%s]", tt.x12Path.Path, actual.Path)
+		}
+		path := actual.String()
+		if path != tt.x12Path.String() {
+			t.Errorf("String Didn't get expected result [%s], instead got [%s]", tt.x12Path.String(), path)
+		}
+	}
+}
+
 /*
-    def test_bad_rel_paths(self):
-        bad_paths = [
-            "AA/03",
-            "BB/CC/03-2"
-        ]
-        for spath in bad_paths:
-            self.assertRaises(pyx12.errors.X12PathError,
-                              pyx12.path.X12Path, spath)
-
-    def test_plain_loops(self):
-        paths = [
-            "ISA_LOOP/GS_LOOP",
-            "GS_LOOP",
-            "ST_LOOP/DETAIL/2000",
-            "GS_LOOP/ST_LOOP/DETAIL/2000A",
-            "DETAIL/2000A/2000B",
-            "2000A/2000B/2300",
-            "2000B/2300/2400",
-            "ST_LOOP/HEADER",
-            "ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A",
-            "GS_LOOP/ST_LOOP/HEADER/1000B"
-        ]
-        for spath in paths:
-            plist = spath.split("/")
-            rd = pyx12.path.X12Path(spath)
-            self.assertEqual(rd.loop_list, plist,
-                             "%s: %s != %s" % (spath, rd.loop_list, plist))
-
 
 class AbsolutePath(unittest.TestCase):
-    def test_paths_with_refdes(self):
-        tests = [
-            ("/AAA/TST", "TST", None, None, None, ["AAA"]),
-            ("/B1000/TST02", "TST", None, 2, None, ["B1000"]),
-            ("/1000B/TST03-2", "TST", None, 3, 2, ["1000B"]),
-            ("/1000A/1000B/TST[AA]02", "TST", "AA", 2, None, [
-                "1000A", "1000B"]),
-            ("/AA/BB/CC/TST[1B5]03-1", "TST", "1B5", 3, 1, ["AA", "BB", "CC"]),
-            ("/DDD/E1000/N102", "N1", None, 2, None, ["DDD", "E1000"]),
-            ("/E1000/D322/N102-5", "N1", None, 2, 5, ["E1000", "D322"]),
-            ("/BB/CC/N1[AZR]02", "N1", "AZR", 2, None, ["BB", "CC"]),
-            ("/BB/CC/N1[372]02-5", "N1", "372", 2, 5, ["BB", "CC"])
-        ]
-        for (spath, seg_id, qual, eleidx, subeleidx, plist) in tests:
-            rd = pyx12.path.X12Path(spath)
-            self.assertEqual(rd.relative, False,
-                             "%s: %s != %s" % (spath, rd.relative, False))
-            self.assertEqual(rd.seg_id, seg_id,
-                             "%s: %s != %s" % (spath, rd.seg_id, seg_id))
-            self.assertEqual(rd.id_val, qual, "%s: %s != %s" %
-                             (spath, rd.id_val, qual))
-            self.assertEqual(rd.ele_idx, eleidx,
-                             "%s: %s != %s" % (spath, rd.ele_idx, eleidx))
-            self.assertEqual(rd.subele_idx, subeleidx, "%s: %s != %s" %
-                             (spath, rd.subele_idx, subeleidx))
-            self.assertEqual(rd.format(), spath,
-                             "%s: %s != %s" % (spath, rd.format(), spath))
-            self.assertEqual(rd.loop_list, plist,
-                             "%s: %s != %s" % (spath, rd.loop_list, plist))
-
-    def test_bad_paths(self):
-        bad_paths = [
-            "/AA/03",
-            "/BB/CC/03-2"
-        ]
-        for spath in bad_paths:
-            self.assertRaises(pyx12.errors.X12PathError,
-                              pyx12.path.X12Path, spath)
-
     def test_plain_loops(self):
         paths = [
-            "/ISA_LOOP/GS_LOOP",
-            "/ISA_LOOP/GS_LOOP",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A/2000B/2300/2400",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000A",
-            "/ISA_LOOP/GS_LOOP/ST_LOOP/HEADER/1000B"
         ]
         for spath in paths:
             plist = spath.split("/")[1:]
