@@ -37,7 +37,7 @@ func (s *Segment) GetValue(x12path string) (val string, found bool, err error) {
 	myEleIdx := xpath.ElementIdx - 1
 	var mySubeleIdx int
 	if xpath.SubelementIdx == 0 {
-		if len(s.Composites[myEleIdx]) > 1 {
+		if myEleIdx < len(s.Composites) && len(s.Composites[myEleIdx]) > 1 {
 			return "", false, fmt.Errorf("This is a composite but no sub-element index was specified for [%s]", x12path)
 		}
 		mySubeleIdx = 0
