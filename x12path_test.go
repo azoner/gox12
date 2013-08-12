@@ -67,7 +67,7 @@ func TestRefDes(t *testing.T) {
 	for _, tt := range tests {
 		actual, err := ParseX12Path(tt.spath)
 		if err != nil {
-			t.Errorf("Didn't get a value for [%s]", actual)
+			t.Errorf("Didn't get a value for [%s]", tt.spath)
 		}
 		if actual.SegmentId != tt.seg_id {
 			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.seg_id, actual.SegmentId)
@@ -260,18 +260,6 @@ func TestX12PathGeneral(t *testing.T) {
 }
 
 /*
-
-class AbsolutePath(unittest.TestCase):
-    def test_plain_loops(self):
-        paths = [
-        ]
-        for spath in paths:
-            plist = spath.split("/")[1:]
-            rd = pyx12.path.X12Path(spath)
-            self.assertEqual(rd.loop_list, plist,
-                             "%s: %s != %s" % (spath, rd.loop_list, plist))
-
-
 class Equality(unittest.TestCase):
     def test_equal1(self):
         p1 = pyx12.path.X12Path("/ISA_LOOP/GS_LOOP/ST_LOOP/DETAIL/2000A")
