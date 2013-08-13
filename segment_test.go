@@ -66,9 +66,40 @@ func TestSegmentIndexNotFound(t *testing.T) {
 	}
 }
 
+func TestSegmentIdentity(t *testing.T) {
+	var segtests = []struct {
+		rawseg string
+	}{
+		{"TST*AA:1:1*BB:5*ZZ"},
+		{"ISA*00*          *00*          *ZZ*ZZ000          *ZZ*ZZ001          *030828*1128*U*00401*000010121*0*T*:\n"},
+	}
+	for _, tt := range segtests {
+		seg := NewSegment(tt.rawseg, '*', ':', '^')
+		actual := seg.String()
+		if actual != tt.rawseg {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.rawseg, actual)
+		}
+	}
+}
+
 func BenchmarkSegmentParse(b *testing.B) {
 	str2 := "TST&AA!1!1&BB!5"
 	for i := 0; i < b.N; i++ {
 		_ = NewSegment(str2, '&', '!', '^')
+	}
+}
+
+func BenchmarkSegmentString(b *testing.B) {
+	rawseg := "TST&AA!1!1&BBbbbbbbbbb!5&&B!FjhhealkjF&&J&HJY&IU"
+	s := NewSegment(rawseg, '&', '!', '^')
+	for i := 0; i < b.N; i++ {
+		_ = s.String()
+	}
+}
+func BenchmarkSegmentFormat(b *testing.B) {
+	rawseg := "TST&AA!1!1&BBbbbbbbbbb!5&&B!FjhhealkjF&&J&HJY&IU"
+	s := NewSegment(rawseg, '&', '!', '^')
+	for i := 0; i < b.N; i++ {
+		_ = s.Format('*', ':', '^')
 	}
 }

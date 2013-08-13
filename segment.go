@@ -1,6 +1,7 @@
 package gox12
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 )
@@ -8,6 +9,11 @@ import (
 type Segment struct {
 	SegmentId  string
 	Composites [][]string
+}
+
+type ElementValue struct {
+	X12Path X12Path
+	Value   string
 }
 
 func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) Segment {
@@ -52,11 +58,6 @@ func (s *Segment) GetValue(x12path string) (val string, found bool, err error) {
 	return "", false, nil
 }
 
-type ElementValue struct {
-	X12Path X12Path
-	Value   string
-}
-
 func (s *Segment) GetAllValues() <-chan ElementValue {
 	ch := make(chan ElementValue)
 	go func() {
@@ -71,6 +72,21 @@ func (s *Segment) GetAllValues() <-chan ElementValue {
 		close(ch)
 	}()
 	return ch
+}
+
+// Default formatting
+func (s *Segment) String() string {
+	return s.Format('*', ':', '^')
+}
+
+func (s *Segment) Format(elementTerm byte, subelementTerm byte, repTerm byte) string {
+	var buf bytes.Buffer
+	buf.WriteString(s.SegmentId)
+	for _, comp := range s.Composites {
+		buf.WriteByte(elementTerm)
+		buf.WriteString(strings.Join(comp, string(subelementTerm)))
+	}
+	return buf.String()
 }
 
 //func splitComposite(f2 string, term string) (ret []string) {
