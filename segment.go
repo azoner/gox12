@@ -8,8 +8,10 @@ import (
 
 type Segment struct {
 	SegmentId  string
-	Composites [][]string
+	Composites []Composite
 }
+
+type Composite []string
 
 type ElementValue struct {
 	X12Path X12Path
@@ -19,7 +21,7 @@ type ElementValue struct {
 func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte) Segment {
 	fields := strings.Split(line, string(elementTerm))
 	segmentId := fields[0]
-	comps := make([][]string, len(fields)-1)
+	comps := make([]Composite, len(fields)-1)
 	for i, v := range fields[1:] {
 		c := strings.Split(v, string(subelementTerm))
 		comps[i] = c
@@ -84,14 +86,16 @@ func (s *Segment) Format(elementTerm byte, subelementTerm byte, repTerm byte) st
 	buf.WriteString(s.SegmentId)
 	for _, comp := range s.Composites {
 		buf.WriteByte(elementTerm)
-		buf.WriteString(strings.Join(comp, string(subelementTerm)))
+		buf.WriteString(formatComposite(comp, subelementTerm, repTerm))
 	}
 	return buf.String()
+}
+
+func formatComposite(c Composite, subelementTerm byte, repTerm byte) string {
+	return strings.Join(c, string(subelementTerm))
 }
 
 //func splitComposite(f2 string, term string) (ret []string) {
 //	ret = strings.Split(f2, term)
 //	return
 //}
-
-//type Composite []string
