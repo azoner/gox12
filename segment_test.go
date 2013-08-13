@@ -82,6 +82,40 @@ func TestSegmentIdentity(t *testing.T) {
 	}
 }
 
+func TestSegmentString(t *testing.T) {
+	var segtests = []struct {
+		rawseg   string
+		expected string
+	}{
+		{"TST*AA:1:1*BB:5*Zed", "TST*AA:1:1*BB:5*Zed"},
+		{"N1*55:123*PIRATE**Da", "N1*55:123*PIRATE**Da"},
+	}
+	for _, tt := range segtests {
+		seg := NewSegment(tt.rawseg, '*', ':', '^')
+		actual := seg.String()
+		if actual != tt.expected {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.expected, actual)
+		}
+	}
+}
+
+func TestSegmentFormat(t *testing.T) {
+	var segtests = []struct {
+		rawseg   string
+		expected string
+	}{
+		{"TST*AA:1:1*BB:5*Zed", "TST#AA%1%1#BB%5#Zed"},
+		{"N1*55:123*PIRATE**Dada", "N1#55%123#PIRATE##Dada"},
+	}
+	for _, tt := range segtests {
+		seg := NewSegment(tt.rawseg, '*', ':', '^')
+		actual := seg.Format('#', '%', '^')
+		if actual != tt.expected {
+			t.Errorf("Didn't get expected result [%s], instead got [%s]", tt.expected, actual)
+		}
+	}
+}
+
 func BenchmarkSegmentParse(b *testing.B) {
 	str2 := "TST&AA!1!1&BB!5"
 	for i := 0; i < b.N; i++ {
