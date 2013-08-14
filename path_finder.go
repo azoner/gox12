@@ -25,3 +25,9 @@ type EmptyPath struct {
 //func makeFinderFunction() (func(string, Segment) string, bool, error) {
 //    return
 //}
+
+// this is the method signature
+// need to close lookup maps
+func findPath(rawpath string, seg Segment) (newpath string, ok bool, err error) {
+	return "", true, nil
+}

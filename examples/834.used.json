@@ -1,0 +1,207 @@
+{
+  "Maps": {
+    "DETAIL/2000/2100A/DMG": [
+      {
+        "newpath": "DETAIL/2000/2100G/NM1", 
+        "segid": "NM1", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100A/LUI": [
+      {
+        "newpath": "DETAIL/2000/2100G/NM1", 
+        "segid": "NM1", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100A/N3": [
+      {
+        "newpath": "DETAIL/2000/2100A/N4", 
+        "segid": "N4", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100A/N4": [
+      {
+        "newpath": "DETAIL/2000/2100A/DMG", 
+        "segid": "DMG", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100A/NM1": [
+      {
+        "newpath": "DETAIL/2000/2100A/PER", 
+        "segid": "PER", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100A/PER": [
+      {
+        "newpath": "DETAIL/2000/2100A/N3", 
+        "segid": "N3", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100G/N3": [
+      {
+        "newpath": "DETAIL/2000/2100G/N4", 
+        "segid": "N4", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100G/N4": [
+      {
+        "newpath": "DETAIL/2000/2300/HD", 
+        "segid": "HD", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2100G/NM1": [
+      {
+        "newpath": "DETAIL/2000/2100G/N3", 
+        "segid": "N3", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/2330/N3": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/2330/N4", 
+        "segid": "N4", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/2330/N4": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/2330/PER", 
+        "segid": "PER", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/2330/NM1": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/2330/N3", 
+        "segid": "N3", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/2330/PER": [
+      {
+        "newpath": "DETAIL/2000/INS", 
+        "segid": "INS", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/COB": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/REF", 
+        "segid": "REF", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/DTP": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/2330/NM1", 
+        "segid": "NM1", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/2320/REF": [
+      {
+        "newpath": "DETAIL/2000/2300/2320/REF", 
+        "segid": "REF", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/DTP": [
+      {
+        "newpath": "DETAIL/2000/INS", 
+        "segid": "INS", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/2300/HD": [
+      {
+        "newpath": "DETAIL/2000/2300/DTP", 
+        "segid": "DTP", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/DTP": [
+      {
+        "newpath": "DETAIL/2000/2100A/NM1", 
+        "segid": "NM1", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/INS": [
+      {
+        "newpath": "DETAIL/2000/REF[0F]", 
+        "segid": "REF", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/REF[0F]": [
+      {
+        "newpath": "DETAIL/2000/REF[1L]", 
+        "segid": "REF", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/REF[17]": [
+      {
+        "newpath": "DETAIL/2000/DTP", 
+        "segid": "DTP", 
+        "f": "seg"
+      }
+    ], 
+    "DETAIL/2000/REF[1L]": [
+      {
+        "newpath": "DETAIL/2000/REF[17]", 
+        "segid": "REF", 
+        "f": "seg"
+      }
+    ], 
+    "HEADER/1000A/N1": [
+      {
+        "newpath": "HEADER/1000B/N1", 
+        "segid": "N1", 
+        "f": "seg"
+      }
+    ], 
+    "HEADER/1000B/N1": [
+      {
+        "newpath": "DETAIL/2000/INS", 
+        "segid": "INS", 
+        "f": "seg"
+      }
+    ], 
+    "HEADER/BGN": [
+      {
+        "newpath": "HEADER/DTP", 
+        "segid": "DTP", 
+        "f": "seg"
+      }
+    ], 
+    "HEADER/DTP": [
+      {
+        "newpath": "HEADER/QTY", 
+        "segid": "QTY", 
+        "f": "seg"
+      }
+    ], 
+    "HEADER/QTY": [
+      {
+        "newpath": "HEADER/1000A/N1", 
+        "segid": "N1", 
+        "f": "seg"
+      }
+    ], 
+    "ST": [
+      {
+        "newpath": "HEADER/BGN", 
+        "segid": "BGN", 
+        "f": "seg"
+      }
+    ]
+  }
+}
