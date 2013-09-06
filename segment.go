@@ -29,6 +29,7 @@ func NewSegment(line string, elementTerm byte, subelementTerm byte, repTerm byte
 	return Segment{segmentId, comps}
 }
 
+// GetValue returns the string value of the simple element at the x12path
 // Acts like golang maps, if not found, returns default value with found==false
 // X12 Path indices are 1-based
 func (s *Segment) GetValue(x12path string) (val string, found bool, err error) {

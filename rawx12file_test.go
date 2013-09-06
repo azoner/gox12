@@ -1,7 +1,6 @@
 package gox12
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -20,17 +19,45 @@ func TestArbitraryDelimiters(t *testing.T) {
 	inFile := strings.NewReader(str1)
 	raw, err := NewRawX12FileReader(inFile)
 	if err != nil {
-		//fmt.Println(err)
+        t.Errorf("NewRawX12FileReader failed")
 	}
 	//expectedDelimeters := Delimiters{'+', '&', '!', 0}
 	expectedSegTerm := '+'
-	// segmentTerm
-	// elementTerm
-	// subelementTerm
-	// repetitionTerm
+    //expectedElementTerm := '&'
+    //expectedSubelementTerm := '!'
+    //expectedRepetitionTerm := 0
 	if raw.segmentTerm != byte(expectedSegTerm) {
 		t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedSegTerm, raw.segmentTerm)
 	}
+	//for s := range raw.GetSegments() {
+	//	//fmt.Println(s)
+	//}
+}
+
+func TestBinaryDelimiters(t *testing.T) {
+	str1 := "ISA&00&          &00&          &ZZ&ZZ000          &ZZ&ZZ001          &030828&1128&U&00401&000010121&0&T&!+\n"
+    str1 += "GS&HC&ZZ000&ZZ001&20030828&1128&17&X&004010X098+\n"
+    str1 += "ST&837&11280001+\n"
+    str1 += "TST&AA!1!1&BB!5+\n"
+    str1 += "SE&3&11280001+\n"
+    str1 += "GE&1&17+\n"
+    str1 += "IEA&1&000010121+\n"
+    str1 = strings.Replace(str1, "&", "\x1C", -1)
+    str1 = strings.Replace(str1, "+", "\x1D", -1)
+    str1 = strings.Replace(str1, "!", "\x1E", -1)
+	inFile := strings.NewReader(str1)
+	raw, err := NewRawX12FileReader(inFile)
+	if err != nil {
+        t.Errorf("NewRawX12FileReader failed")
+	}
+	//expectedDelimeters := Delimiters{'+', '&', '!', 0}
+    expectedSegTerm := "\x1C"
+    //expectedElementTerm := "\x1D"
+    //expectedSubelementTerm := "\x1E"
+    //expectedRepetitionTerm := 0
+	//if raw.segmentTerm != expectedSegTerm[0] {
+	//	t.Errorf("Didn't get expected result [%s], instead got [%s]", expectedSegTerm, raw.segmentTerm)
+	//}
 	//for s := range raw.GetSegments() {
 	//	//fmt.Println(s)
 	//}
@@ -47,7 +74,11 @@ func testParse834(t *testing.T) {
 	}
 	defer inFile.Close()
 	raw, err := NewRawX12FileReader(inFile)
+    ct := 0
 	for seg := range raw.GetSegments() {
-		fmt.Println(seg)
+        ct += 1
 	}
+    if ct != 7 {
+        t.Errorf("Didn't get expected segment count of %d, instead got %d", 7, ct)
+    }
 }
