@@ -75,7 +75,7 @@ func getDelimiters(isa string) (segTerm byte, eleTerm byte, subeleTerm byte, rep
 	segTerm = isa[len(isa)-1]
 	eleTerm = isa[3]
 	subeleTerm = isa[len(isa)-2]
-	if isa[84:89] == "005010" {
+	if isa[84:89] == "00501" {
 		repTerm = isa[82]
 	}
 	return
