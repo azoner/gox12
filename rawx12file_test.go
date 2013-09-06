@@ -90,6 +90,19 @@ func TestArbitraryDelimiters5010(t *testing.T) {
 
 //str1 = strings.Replace(str1, "&", "\x1C", -1)
 
+func X12InterchangeControlVersion5010(t *testing.T) {
+	isa_line := "ISA&00&          &00&          &ZZ&ZZ000          &ZZ&ZZ001          &030828&1128&^&00501&000010121&0&T&!+\n"
+	inFile := strings.NewReader(isa_line)
+	raw, err := NewRawX12FileReader(inFile)
+	if err != nil {
+		t.Errorf("NewRawX12FileReader failed")
+	}
+	expected := "00501"
+	if raw.icvn != expected {
+		t.Errorf("Didn't get expected result [%s], instead got s%c]", expected, raw.icvn)
+	}
+}
+
 func testParse834(t *testing.T) {
 	inFilename := "test834.txt"
 	//inFile *os.File
