@@ -49,6 +49,9 @@ func main() {
 				break
 			}
 		}
+		func func_name() {
+			
+		}
 		fmt.Println("Not found")
 	}
 	return
