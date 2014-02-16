@@ -34,7 +34,30 @@ func (finder *HeaderPathFinder) FindNext(x12Path string, segment Segment) (found
 	return "", false, nil
 }
 
-type PathFinder func(string, Segment) (string, bool, error)
+type FirstMatchPathFinder struct {
+	Finders []X12PathFinder
+}
+
+func NewFirstMatchPathFinder(finder ...X12PathFinder) *FirstMatchPathFinder {
+	f := new(FirstMatchPathFinder)
+	f.Finders = make([]X12PathFinder, 0)
+	for _, fn := range finder {
+		f.Finders = append(f.Finders, fn)
+	}
+	return f
+}
+
+func (finder *FirstMatchPathFinder) FindNext(x12Path string, segment Segment) (foundPath string, found bool, err error) {
+	for _, f2 := range finder.Finders {
+		res, ok, err := f2.FindNext(x12Path, segment)
+		if ok {
+			return res, ok, err
+		}
+	}
+	return "", false, nil
+}
+
+// type PathFinder func(string, Segment) (string, bool, error)
 
 type EmptyPath struct {
 	Path string
