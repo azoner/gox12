@@ -1,207 +1,204 @@
 {
-  "Maps": {
-    "DETAIL/2000/2100A/DMG": [
-      {
-        "newpath": "DETAIL/2000/2100G/NM1", 
-        "segid": "NM1", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100A/LUI": [
-      {
-        "newpath": "DETAIL/2000/2100G/NM1", 
-        "segid": "NM1", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100A/N3": [
-      {
-        "newpath": "DETAIL/2000/2100A/N4", 
-        "segid": "N4", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100A/N4": [
-      {
-        "newpath": "DETAIL/2000/2100A/DMG", 
-        "segid": "DMG", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100A/NM1": [
-      {
-        "newpath": "DETAIL/2000/2100A/PER", 
-        "segid": "PER", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100A/PER": [
-      {
-        "newpath": "DETAIL/2000/2100A/N3", 
-        "segid": "N3", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100G/N3": [
-      {
-        "newpath": "DETAIL/2000/2100G/N4", 
-        "segid": "N4", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100G/N4": [
-      {
-        "newpath": "DETAIL/2000/2300/HD", 
-        "segid": "HD", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2100G/NM1": [
-      {
-        "newpath": "DETAIL/2000/2100G/N3", 
-        "segid": "N3", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/2330/N3": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/2330/N4", 
-        "segid": "N4", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/2330/N4": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/2330/PER", 
-        "segid": "PER", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/2330/NM1": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/2330/N3", 
-        "segid": "N3", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/2330/PER": [
-      {
-        "newpath": "DETAIL/2000/INS", 
-        "segid": "INS", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/COB": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/REF", 
-        "segid": "REF", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/DTP": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/2330/NM1", 
-        "segid": "NM1", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/2320/REF": [
-      {
-        "newpath": "DETAIL/2000/2300/2320/REF", 
-        "segid": "REF", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/DTP": [
-      {
-        "newpath": "DETAIL/2000/INS", 
-        "segid": "INS", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/2300/HD": [
-      {
-        "newpath": "DETAIL/2000/2300/DTP", 
-        "segid": "DTP", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/DTP": [
-      {
-        "newpath": "DETAIL/2000/2100A/NM1", 
-        "segid": "NM1", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/INS": [
-      {
-        "newpath": "DETAIL/2000/REF[0F]", 
-        "segid": "REF", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/REF[0F]": [
-      {
-        "newpath": "DETAIL/2000/REF[1L]", 
-        "segid": "REF", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/REF[17]": [
-      {
-        "newpath": "DETAIL/2000/DTP", 
-        "segid": "DTP", 
-        "f": "seg"
-      }
-    ], 
-    "DETAIL/2000/REF[1L]": [
-      {
-        "newpath": "DETAIL/2000/REF[17]", 
-        "segid": "REF", 
-        "f": "seg"
-      }
-    ], 
-    "HEADER/1000A/N1": [
-      {
-        "newpath": "HEADER/1000B/N1", 
-        "segid": "N1", 
-        "f": "seg"
-      }
-    ], 
-    "HEADER/1000B/N1": [
-      {
-        "newpath": "DETAIL/2000/INS", 
-        "segid": "INS", 
-        "f": "seg"
-      }
-    ], 
-    "HEADER/BGN": [
-      {
-        "newpath": "HEADER/DTP", 
-        "segid": "DTP", 
-        "f": "seg"
-      }
-    ], 
-    "HEADER/DTP": [
-      {
-        "newpath": "HEADER/QTY", 
-        "segid": "QTY", 
-        "f": "seg"
-      }
-    ], 
-    "HEADER/QTY": [
-      {
-        "newpath": "HEADER/1000A/N1", 
-        "segid": "N1", 
-        "f": "seg"
-      }
-    ], 
-    "ST": [
-      {
-        "newpath": "HEADER/BGN", 
-        "segid": "BGN", 
-        "f": "seg"
-      }
-    ]
-  }
+  "DETAIL/2000/2100A/DMG": [
+    {
+      "FoundPath": "DETAIL/2000/2100G/NM1",
+      "SegId": "NM1"
+    }
+  ],
+  "DETAIL/2000/2100A/LUI": [
+    {
+      "FoundPath": "DETAIL/2000/2100G/NM1",
+      "SegId": "NM1",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100A/N3": [
+    {
+      "FoundPath": "DETAIL/2000/2100A/N4",
+      "SegId": "N4",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100A/N4": [
+    {
+      "FoundPath": "DETAIL/2000/2100A/DMG",
+      "SegId": "DMG",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100A/NM1": [
+    {
+      "FoundPath": "DETAIL/2000/2100A/PER",
+      "SegId": "PER",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100A/PER": [
+    {
+      "FoundPath": "DETAIL/2000/2100A/N3",
+      "SegId": "N3",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100G/N3": [
+    {
+      "FoundPath": "DETAIL/2000/2100G/N4",
+      "SegId": "N4",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100G/N4": [
+    {
+      "FoundPath": "DETAIL/2000/2300/HD",
+      "SegId": "HD",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2100G/NM1": [
+    {
+      "FoundPath": "DETAIL/2000/2100G/N3",
+      "SegId": "N3",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/2330/N3": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/2330/N4",
+      "SegId": "N4",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/2330/N4": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/2330/PER",
+      "SegId": "PER",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/2330/NM1": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/2330/N3",
+      "SegId": "N3",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/2330/PER": [
+    {
+      "FoundPath": "DETAIL/2000/INS",
+      "SegId": "INS",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/COB": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/REF",
+      "SegId": "REF",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/DTP": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/2330/NM1",
+      "SegId": "NM1",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/2320/REF": [
+    {
+      "FoundPath": "DETAIL/2000/2300/2320/REF",
+      "SegId": "REF",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/DTP": [
+    {
+      "FoundPath": "DETAIL/2000/INS",
+      "SegId": "INS",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/2300/HD": [
+    {
+      "FoundPath": "DETAIL/2000/2300/DTP",
+      "SegId": "DTP",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/DTP": [
+    {
+      "FoundPath": "DETAIL/2000/2100A/NM1",
+      "SegId": "NM1",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/INS": [
+    {
+      "FoundPath": "DETAIL/2000/REF[0F]",
+      "SegId": "REF",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/REF[0F]": [
+    {
+      "FoundPath": "DETAIL/2000/REF[1L]",
+      "SegId": "REF",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/REF[17]": [
+    {
+      "FoundPath": "DETAIL/2000/DTP",
+      "SegId": "DTP",
+      "type": "seg"
+    }
+  ],
+  "DETAIL/2000/REF[1L]": [
+    {
+      "FoundPath": "DETAIL/2000/REF[17]",
+      "SegId": "REF",
+      "type": "seg"
+    }
+  ],
+  "HEADER/1000A/N1": [
+    {
+      "FoundPath": "HEADER/1000B/N1",
+      "SegId": "N1",
+      "type": "seg"
+    }
+  ],
+  "HEADER/1000B/N1": [
+    {
+      "FoundPath": "DETAIL/2000/INS",
+      "SegId": "INS",
+      "type": "seg"
+    }
+  ],
+  "HEADER/BGN": [
+    {
+      "FoundPath": "HEADER/DTP",
+      "SegId": "DTP",
+      "type": "seg"
+    }
+  ],
+  "HEADER/DTP": [
+    {
+      "FoundPath": "HEADER/QTY",
+      "SegId": "QTY",
+      "type": "seg"
+    }
+  ],
+  "HEADER/QTY": [
+    {
+      "FoundPath": "HEADER/1000A/N1",
+      "SegId": "N1",
+      "type": "seg"
+    }
+  ],
+  "ST": [
+    {
+      "FoundPath": "HEADER/BGN",
+      "SegId": "BGN",
+      "type": "seg"
+    }
+  ]
 }
