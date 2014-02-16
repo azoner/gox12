@@ -2,20 +2,19 @@ package gox12
 
 import ()
 
-//type X12PathFinder interface {
-//	FindNext(x12Path string, segment Segment) (newpath string, found bool, err error)
-//}
-
-type PathFinder func(string, Segment) (string, bool, error)
-
-type EmptyPath struct {
-	Path string
+// Given the current location, find the path of the new segment
+type X12PathFinder interface {
+	FindNext(x12Path string, segment Segment) (foundPath string, found bool, err error)
 }
 
-//type Lookup func(string, gox12.Segment) (string, bool, error)
+// Hardcoded lookups for standard X12 structure wrappers
+type HeaderPathFinder struct {
+	hardMap map[string]string
+}
 
-func MakeMapFinder() PathFinder {
-	var hardMap = map[string]string{
+func NewHeaderMapFinder() *HeaderPathFinder {
+	f := new(HeaderPathFinder)
+	f.hardMap = map[string]string{
 		"ISA": "/ISA_LOOP/ISA",
 		"IEA": "/ISA_LOOP/IEA",
 		"GS":  "/ISA_LOOP/GS_LOOP/GS",
@@ -23,37 +22,31 @@ func MakeMapFinder() PathFinder {
 		"ST":  "/ISA_LOOP/GS_LOOP/ST_LOOP/ST",
 		"SE":  "/ISA_LOOP/GS_LOOP/ST_LOOP/SE",
 	}
-	return func(rawpath string, s Segment) (string, bool, error) {
-		segId := s.SegmentId
-		p, ok := hardMap[segId]
-		if ok {
-			return p, ok, nil
-		}
-		return "", false, nil
-	}
+	return f
 }
 
-// map[start_x12path] []struct {match_func func(seg) bool, newpath string}
+func (finder *HeaderPathFinder) FindNext(x12Path string, segment Segment) (foundPath string, found bool, err error) {
+	segId := segment.SegmentId
+	p, ok := finder.hardMap[segId]
+	if ok {
+		return p, ok, nil
+	}
+	return "", false, nil
+}
 
-//testLookups := map[string]
+type PathFinder func(string, Segment) (string, bool, error)
+
+type EmptyPath struct {
+	Path string
+}
 
 //func (e *EmptyPath) Run2 PathFinder {
 //    return "", true, nil
 //}
 
-//func MakeFinder() func() {
-//    f := func(x12Path string, segment Segment) {
-//    }
-//    return f
-//}
-
-//func makeFinderFunction() (func(string, Segment) string, bool, error) {
-//    return
-//}
-
 // this is the method signature
 // need to close lookup maps
-func findPath(rawpath string, seg Segment) (newpath string, ok bool, err error) {
+func findPath(rawpath string, seg Segment) (foundPath string, ok bool, err error) {
 	return "", true, nil
 }
 
