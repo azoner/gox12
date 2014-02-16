@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gox12"
+	"github.com/azoner/gox12"
 )
 
 func main() {
