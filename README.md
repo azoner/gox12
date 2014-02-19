@@ -4,7 +4,7 @@ gox12
 golang X12 non-validating parser
 
 [![Build Status](https://travis-ci.org/azoner/gox12.png)](https://travis-ci.org/azoner/gox12)
-[![Coverage Status](https://coveralls.io/repos/azoner/gox12/badge.png?branch=pathfinder)](https://coveralls.io/r/azoner/gox12?branch=pathfinder)
+<!--- [![Coverage Status](https://coveralls.io/repos/azoner/gox12/badge.png?branch=pathfinder)](https://coveralls.io/r/azoner/gox12?branch=pathfinder) -->
 Installation
 ------------
 
