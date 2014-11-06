@@ -14,6 +14,36 @@ func TestSegmentParseSegmentId(t *testing.T) {
 	}
 }
 
+func TestSegmentSetValue(t *testing.T) {
+	var segtests = []struct {
+		refdes   string
+		expected string
+	}{
+		{"INS01", "Y"},
+		{"INS02", "18"},
+		{"INS05", "C"},
+	}
+	segmentStr := "INS*Y*18*030*20*A"
+	seg := NewSegment(segmentStr, '*', ':', '~')
+	err := seg.SetValue("INS05", "C")
+	if err != nil {
+		t.Errorf("Failed to SetValue INS05 [%s]", err)
+	}
+
+	for _, tt := range segtests {
+		actual, found, err := seg.GetValue(tt.refdes)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
+		if !found {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
+		if actual != tt.expected {
+			t.Errorf("Didn't get expected result [%s] for path [%s], instead got [%s]", tt.expected, tt.refdes, actual)
+		}
+	}
+}
+
 func TestSegmentParseComposites(t *testing.T) {
 	var segtests = []struct {
 		refdes   string

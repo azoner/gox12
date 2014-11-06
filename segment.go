@@ -61,6 +61,35 @@ func (s *Segment) GetValue(x12path string) (val string, found bool, err error) {
 	return "", false, nil
 }
 
+func (s *Segment) SetValue(x12path, val string) (err error) {
+	var xpath *X12Path
+	if xpath, err = ParseX12Path(x12path); err != nil {
+		return err
+	}
+	if xpath.SegmentId != "" && s.SegmentId != xpath.SegmentId {
+		return fmt.Errorf("Looking for Segment ID[%s], mine is [%s]", xpath.SegmentId, s.SegmentId)
+	}
+	if xpath.ElementIdx == 0 {
+		return fmt.Errorf("No element index specified for [%s]", x12path)
+	}
+	myEleIdx := xpath.ElementIdx - 1
+	var mySubeleIdx int
+	if xpath.SubelementIdx == 0 {
+		if myEleIdx < len(s.Composites) && len(s.Composites[myEleIdx]) > 1 {
+			return fmt.Errorf("This is a composite but no sub-element index was specified for [%s]", x12path)
+		}
+		mySubeleIdx = 0
+	} else {
+		mySubeleIdx = xpath.SubelementIdx - 1
+	}
+	if myEleIdx < len(s.Composites) {
+		if mySubeleIdx < len(s.Composites[myEleIdx]) {
+			s.Composites[myEleIdx][mySubeleIdx] = val
+		}
+	}
+	return nil
+}
+
 func (s *Segment) GetAllValues() <-chan ElementValue {
 	ch := make(chan ElementValue)
 	go func() {
