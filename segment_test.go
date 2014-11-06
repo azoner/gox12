@@ -14,7 +14,40 @@ func TestSegmentParseSegmentId(t *testing.T) {
 	}
 }
 
-func TestSegmentSetValue(t *testing.T) {
+func TestSegmentSetValueSubelement(t *testing.T) {
+	var segtests = []struct {
+		refdes   string
+		expected string
+	}{
+		{"SVC01-1", "HC"},
+		{"SVC01-2", "H0004"},
+		{"SVC01-3", "HF"},
+		{"SVC01-4", "H8"},
+	}
+	segmentStr := "SVC*HC:H0005:HF:H9*56.70*56.52**6"
+	seg := NewSegment(segmentStr, '*', ':', '~')
+	err := seg.SetValue("SVC01-4", "H8")
+	err = seg.SetValue("SVC01-2", "H0004")
+	if err != nil {
+		t.Errorf("Failed to SetValue INS05 [%s]", err)
+	}
+
+	for _, tt := range segtests {
+		actual, found, err := seg.GetValue(tt.refdes)
+		if err != nil {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
+		if !found {
+			t.Errorf("Didn't get a value for [%s]", tt.refdes)
+		}
+		if actual != tt.expected {
+			t.Errorf("Didn't get expected result [%s] for path [%s], instead got [%s]", tt.expected, tt.refdes, actual)
+		}
+	}
+}
+
+
+func TestSegmentSetValueSegment(t *testing.T) {
 	var segtests = []struct {
 		refdes   string
 		expected string
