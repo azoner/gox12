@@ -24,16 +24,21 @@ func TestSegmentSetValueSubelement(t *testing.T) {
 		{"SVC01-3", "HF"},
 		{"SVC01-4", "H8"},
 	}
-	segmentStr := "SVC*HC:H0005:HF:H9*56.70*56.52**6"
-	seg := NewSegment(segmentStr, '*', ':', '~')
-	err := seg.SetValue("SVC01-4", "H8")
-	err = seg.SetValue("SVC01-2", "H0004")
-	if err != nil {
-		t.Errorf("Failed to SetValue INS05 [%s]", err)
-	}
+	segmentStr := "SVC*AA:H0005:FF:H9*56.70*56.52**6"
 
 	for _, tt := range segtests {
+		seg := NewSegment(segmentStr, '*', ':', '~')
+		// first, ensure value is not already set
 		actual, found, err := seg.GetValue(tt.refdes)
+		if err != nil || !found || actual == tt.expected {
+			t.Errorf("Pre SetValue, expected result [%s] already set for path [%s]", tt.expected, tt.refdes)
+		}
+		// Act
+		err = seg.SetValue(tt.refdes, tt.expected)
+		if err != nil {
+			t.Errorf("Failed to SetValue [%s] [%s]", tt.refdes, err)
+		}
+		actual, found, err = seg.GetValue(tt.refdes)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", tt.refdes)
 		}
@@ -46,25 +51,29 @@ func TestSegmentSetValueSubelement(t *testing.T) {
 	}
 }
 
-
 func TestSegmentSetValueSegment(t *testing.T) {
 	var segtests = []struct {
 		refdes   string
 		expected string
 	}{
-		{"INS01", "Y"},
-		{"INS02", "18"},
-		{"INS05", "C"},
+		{"INS01", "BB"},
+		{"INS02", "99"},
+		{"INS05", "Z"},
 	}
 	segmentStr := "INS*Y*18*030*20*A"
-	seg := NewSegment(segmentStr, '*', ':', '~')
-	err := seg.SetValue("INS05", "C")
-	if err != nil {
-		t.Errorf("Failed to SetValue INS05 [%s]", err)
-	}
-
 	for _, tt := range segtests {
+		seg := NewSegment(segmentStr, '*', ':', '~')
+		// first, ensure value is not already set
 		actual, found, err := seg.GetValue(tt.refdes)
+		if err != nil || !found || actual == tt.expected {
+			t.Errorf("Pre SetValue, expected result [%s] already set for path [%s]", tt.expected, tt.refdes)
+		}
+		// Act
+		err = seg.SetValue(tt.refdes, tt.expected)
+		if err != nil {
+			t.Errorf("Failed to SetValue [%s] [%s]", tt.refdes, err)
+		}
+		actual, found, err = seg.GetValue(tt.refdes)
 		if err != nil {
 			t.Errorf("Didn't get a value for [%s]", tt.refdes)
 		}
